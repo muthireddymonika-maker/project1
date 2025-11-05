@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OTP Verification</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Mobile OTP Verification</h2>
+        <input id="phone" type="text" placeholder="Enter phone number" />
+        <button onclick="sendOTP()">Send OTP</button>
+
+        <div id="otpSection" style="display:none;">
+            <input id="otp" type="text" placeholder="Enter OTP" />
+            <button onclick="verifyOTP()">Verify OTP</button>
+        </div>
+
+        <p id="result"></p>
+    </div>
+
+    <script>
+        async function sendOTP() {
+            const phone = document.getElementById('phone').value;
+            const res = await fetch('/send_otp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({phone})
+            });
+            const data = await res.json();
+            document.getElementById('result').innerText = data.message || data.error;
+            if (res.ok) document.getElementById('otpSection').style.display = 'block';
+        }
+
+        async function verifyOTP() {
+            const phone = document.getElementById('phone').value;
+            const otp = document.getElementById('otp').value;
+            const res = await fetch('/verify_otp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({phone, otp})
+            });
+            const data = await res.json();
+            document.getElementById('result').innerText = data.message || data.error;
+
+            if (res.ok) {
+                document.body.innerHTML = "<h1>Hello, welcome to my world!</h1>";
+            }
+        }
+    </script>
+</body>
+</html>
